@@ -545,32 +545,21 @@ with logo_col:
 
 
 with title_col:
-st.markdown(
-    """
-    <div class="info-card">
 
-        <div class="card-title">
-            Evidence-Based Performance
-        </div>
+st.title("📊 Dashboard Kinerja Dosen")
+st.subheader("Program Studi Bisnis Digital FEB UNM")
 
-        <div class="card-text">
-
-            Dashboard menghubungkan rekam aktivitas
-            dosen dengan data Pendidikan, Penelitian,
-            Pengabdian kepada Masyarakat, dan Penunjang.
-
-            <br><br>
-
-            Gunakan filter di sebelah kiri untuk melakukan
-            <b>drill-down</b> berdasarkan tahun, semester,
-            bidang kinerja, dan dosen.
-
-        </div>
-
-    </div>
-    """,
-    unsafe_allow_html=True
+st.write(
+    "Evidence-Based Performance Dashboard untuk pemantauan "
+    "kinerja Pendidikan, Penelitian, Pengabdian kepada Masyarakat, "
+    "dan Penunjang."
 )
+
+st.caption(
+    "DATA KINERJA DOSEN 2022–2025"
+)
+
+st.divider()
 
 # ============================================================
 # SIDEBAR
@@ -1309,32 +1298,18 @@ with tab_evidence:
     )
 
 
-    st.markdown(
-        """
-        <div class="info-card">
+   st.info(
+    """
+    **Evidence-Based Performance**
 
-            <div class="card-title">
-                Evidence-Based Performance
-            </div>
+    Dashboard menghubungkan rekam aktivitas dosen dengan data
+    Pendidikan, Penelitian, Pengabdian kepada Masyarakat,
+    dan Penunjang.
 
-            <div class="card-text">
-
-                Dashboard menghubungkan rekam aktivitas
-                dosen dengan data Pendidikan, Penelitian,
-                Pengabdian kepada Masyarakat, dan Penunjang.
-
-                <br><br>
-
-                Gunakan filter di sebelah kiri untuk melakukan
-                <b>drill-down</b> berdasarkan tahun, semester,
-                bidang kinerja, dan dosen.
-
-            </div>
-
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    Gunakan filter di sebelah kiri untuk melakukan **drill-down**
+    berdasarkan tahun, semester, bidang kinerja, dan dosen.
+    """
+)
 
 
     # Evidence columns
@@ -1516,28 +1491,17 @@ with st.expander(
 # FOOTER
 # ============================================================
 
-st.markdown(
-    """
-    <div class="footer">
+st.divider()
 
-        <b>
-            Dashboard Kinerja Dosen
-            — Bisnis Digital FEB UNM
-        </b>
+st.caption(
+    "Dashboard Kinerja Dosen — Bisnis Digital FEB UNM"
+)
 
-        <br>
+st.caption(
+    "Evidence-Based Performance Dashboard | "
+    "Pendidikan · Penelitian · PkM · Penunjang"
+)
 
-        Evidence-Based Performance Dashboard
-
-        <br><br>
-
-        Pendidikan · Penelitian · PkM · Penunjang
-
-        <br><br>
-
-        Universitas Negeri Makassar
-
-    </div>
-    """,
-    unsafe_allow_html=True
+st.caption(
+    "Universitas Negeri Makassar"
 )
