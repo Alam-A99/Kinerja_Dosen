@@ -1213,10 +1213,7 @@ with tab_tridharma:
 
 with tab_evidence:
 
-    st.header(
-        "🔎 Evidence Explorer"
-    )
-
+    st.header("🔎 Evidence Explorer")
 
     st.info(
         """
@@ -1232,53 +1229,35 @@ with tab_evidence:
         """
     )
 
-
     # --------------------------------------------------------
     # EVIDENCE COLUMNS
     # --------------------------------------------------------
 
     evidence_columns = []
 
-
     if NAME_COL is not None:
-
-        evidence_columns.append(
-            NAME_COL
-        )
-
+        evidence_columns.append(NAME_COL)
 
     if YEAR_COL is not None:
-
-        evidence_columns.append(
-            YEAR_COL
-        )
-
+        evidence_columns.append(YEAR_COL)
 
     if SEMESTER_COL is not None:
-
-        evidence_columns.append(
-            SEMESTER_COL
-        )
-
+        evidence_columns.append(SEMESTER_COL)
 
     evidence_columns.append(
         "kategori_dashboard"
     )
 
-
     if ACTIVITY_COL is not None:
-
-        evidence_columns.append(
-            ACTIVITY_COL
-        )
-
+        evidence_columns.append(ACTIVITY_COL)
 
     if EVIDENCE_COL is not None:
+        evidence_columns.append(EVIDENCE_COL)
 
-        evidence_columns.append(
-            EVIDENCE_COL
-        )
 
+    # --------------------------------------------------------
+    # CREATE EVIDENCE TABLE
+    # --------------------------------------------------------
 
     evidence = filtered[
         evidence_columns
@@ -1286,50 +1265,29 @@ with tab_evidence:
 
 
     # --------------------------------------------------------
-    # RENAME
+    # RENAME COLUMNS
     # --------------------------------------------------------
 
     rename_map = {}
 
-
     if NAME_COL is not None:
-
-        rename_map[
-            NAME_COL
-        ] = "Dosen"
-
+        rename_map[NAME_COL] = "Dosen"
 
     if YEAR_COL is not None:
-
-        rename_map[
-            YEAR_COL
-        ] = "Tahun"
-
+        rename_map[YEAR_COL] = "Tahun"
 
     if SEMESTER_COL is not None:
-
-        rename_map[
-            SEMESTER_COL
-        ] = "Semester"
-
+        rename_map[SEMESTER_COL] = "Semester"
 
     rename_map[
         "kategori_dashboard"
     ] = "Bidang"
 
-
     if ACTIVITY_COL is not None:
-
-        rename_map[
-            ACTIVITY_COL
-        ] = "Aktivitas"
-
+        rename_map[ACTIVITY_COL] = "Aktivitas"
 
     if EVIDENCE_COL is not None:
-
-        rename_map[
-            EVIDENCE_COL
-        ] = "Bukti"
+        rename_map[EVIDENCE_COL] = "Evidence"
 
 
     evidence = evidence.rename(
@@ -1338,19 +1296,100 @@ with tab_evidence:
 
 
     # --------------------------------------------------------
-    # TABLE
+    # EVIDENCE ICON
     # --------------------------------------------------------
 
-    st.dataframe(
-        evidence,
-        use_container_width=True,
-        height=500,
-        hide_index=True
-    )
+    if "Evidence" in evidence.columns:
+
+        def create_evidence_link(value):
+
+            if pd.isna(value):
+
+                return ""
+
+            value = str(value).strip()
+
+            if value == "":
+                return ""
+
+            # Jika evidence sudah berupa URL
+            if (
+                value.startswith("http://")
+                or value.startswith("https://")
+            ):
+
+                return value
+
+            # Jika berupa path/file lokal,
+            # tetap ditampilkan sebagai teks kosong
+            return ""
+
+
+        evidence["Download"] = (
+            evidence["Evidence"]
+            .apply(create_evidence_link)
+        )
+
+
+        # Hapus kolom Evidence asli
+        evidence = evidence.drop(
+            columns=["Evidence"]
+        )
+
+
+        # ----------------------------------------------------
+        # MOVE DOWNLOAD TO LAST COLUMN
+        # ----------------------------------------------------
+
+        columns = [
+            col
+            for col in evidence.columns
+            if col != "Download"
+        ]
+
+        columns.append("Download")
+
+        evidence = evidence[
+            columns
+        ]
 
 
     # --------------------------------------------------------
-    # DOWNLOAD
+    # DISPLAY TABLE
+    # --------------------------------------------------------
+
+    if "Download" in evidence.columns:
+
+        st.dataframe(
+            evidence,
+            use_container_width=True,
+            height=520,
+            hide_index=True,
+
+            column_config={
+
+                "Download":
+                    st.column_config.LinkColumn(
+                        "Evidence",
+                        help="Klik ikon untuk membuka / mengunduh evidence",
+                        display_text="⬇️",
+                        width="small"
+                    )
+            }
+        )
+
+    else:
+
+        st.dataframe(
+            evidence,
+            use_container_width=True,
+            height=520,
+            hide_index=True
+        )
+
+
+    # --------------------------------------------------------
+    # DOWNLOAD DATA FILTER
     # --------------------------------------------------------
 
     st.subheader(
