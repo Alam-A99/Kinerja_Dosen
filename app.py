@@ -546,21 +546,31 @@ with logo_col:
 
 with title_col:
 st.markdown(
-st.title("📊 Dashboard Kinerja Dosen")
-st.subheader("Program Studi Bisnis Digital FEB UNM")
+    """
+    <div class="info-card">
 
-st.write(
-    "Evidence-Based Performance Dashboard untuk pemantauan "
-    "kinerja Pendidikan, Penelitian, Pengabdian kepada Masyarakat, "
-    "dan Penunjang."
+        <div class="card-title">
+            Evidence-Based Performance
+        </div>
+
+        <div class="card-text">
+
+            Dashboard menghubungkan rekam aktivitas
+            dosen dengan data Pendidikan, Penelitian,
+            Pengabdian kepada Masyarakat, dan Penunjang.
+
+            <br><br>
+
+            Gunakan filter di sebelah kiri untuk melakukan
+            <b>drill-down</b> berdasarkan tahun, semester,
+            bidang kinerja, dan dosen.
+
+        </div>
+
+    </div>
+    """,
+    unsafe_allow_html=True
 )
-
-st.caption(
-    "DATA KINERJA DOSEN 2022–2025"
-)
-
-st.divider()
-
 
 # ============================================================
 # SIDEBAR
