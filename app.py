@@ -545,6 +545,7 @@ with logo_col:
 
 
 with title_col:
+st.markdown(
 st.title("📊 Dashboard Kinerja Dosen")
 st.subheader("Program Studi Bisnis Digital FEB UNM")
 
