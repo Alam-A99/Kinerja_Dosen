@@ -742,7 +742,7 @@ with tab_overview:
     with chart_left:
 
         st.subheader(
-            "📈 Tren Kinerja"
+            "📈 Tren Kinerja Dosen"
         )
 
 
