@@ -1,25 +1,6 @@
 # ============================================================
 # DASHBOARD KINERJA DOSEN
-# PROGRAM STUDI BISNIS DIGITAL FEB UNM
-# ============================================================
-#
-# Evidence-Based Performance Dashboard
-# Pendidikan | Penelitian | PkM | Penunjang
-#
-# Struktur folder:
-#
-# aplikasi/
-# ├── app.py
-# ├── logobd.png
-# └── DATA KINERJA DOSEN BISDIG 2022-2025_OK.xlsx
-#
-# Jalankan:
-# streamlit run app.py
-# ============================================================
-
-
-# ============================================================
-# 1. IMPORT LIBRARY
+# BISNIS DIGITAL FEB UNM
 # ============================================================
 
 import os
@@ -28,11 +9,10 @@ import base64
 import streamlit as st
 import pandas as pd
 import numpy as np
-import plotly.express as px
 
 
 # ============================================================
-# 2. PAGE CONFIGURATION
+# PAGE CONFIG
 # ============================================================
 
 st.set_page_config(
@@ -44,7 +24,7 @@ st.set_page_config(
 
 
 # ============================================================
-# 3. KONFIGURASI FILE
+# FILE CONFIGURATION
 # ============================================================
 
 EXCEL_FILE = "DATA KINERJA DOSEN BISDIG 2022-2025_OK.xlsx"
@@ -52,458 +32,291 @@ LOGO_FILE = "logobd.png"
 
 
 # ============================================================
-# 4. CUSTOM CSS
+# CUSTOM CSS
 # ============================================================
 
-st.html("""
-<style>
-
-/* =========================================================
-   GLOBAL
-========================================================= */
-
-.stApp {
-    background: #f5f7fb;
-}
-
-.block-container {
-    padding-top: 1.5rem;
-    padding-bottom: 3rem;
-    max-width: 1500px;
-}
-
-
-/* =========================================================
-   SIDEBAR
-========================================================= */
-
-section[data-testid="stSidebar"] {
-    background: #f8fafc;
-    border-right: 1px solid #e5e7eb;
-}
-
-section[data-testid="stSidebar"] h2 {
-    color: #123b68;
-}
-
-
-/* =========================================================
-   HEADER
-========================================================= */
-
-.dashboard-header {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 24px;
-
-    background: linear-gradient(
-        135deg,
-        #ffffff 0%,
-        #f7fbff 100%
-    );
-
-    border: 1px solid #dbe5f0;
-    border-radius: 18px;
-
-    padding: 24px 30px;
-
-    box-shadow:
-        0 6px 20px rgba(15, 23, 42, 0.06);
-
-    margin-bottom: 25px;
-}
-
-
-/* LOGO */
-
-.logo-box {
-    width: 90px;
-    height: 90px;
-
-    min-width: 90px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.logo-box img {
-    max-width: 90px;
-    max-height: 90px;
-
-    width: auto;
-    height: auto;
-
-    object-fit: contain;
-}
-
-
-/* HEADER TEXT */
-
-.header-text {
-    flex: 1;
-}
-
-.dashboard-title {
-    font-size: 30px;
-    font-weight: 800;
-
-    color: #123b68;
-
-    line-height: 1.2;
-
-    margin-bottom: 8px;
-}
-
-.dashboard-subtitle {
-    font-size: 14px;
-
-    color: #64748b;
-
-    line-height: 1.5;
-}
-
-
-/* =========================================================
-   SECTION TITLE
-========================================================= */
-
-.section-title {
-    font-size: 21px;
-
-    font-weight: 800;
-
-    color: #172033;
-
-    margin-top: 25px;
-
-    margin-bottom: 14px;
-}
-
-
-/* =========================================================
-   KPI
-========================================================= */
-
-.kpi-card {
-    background: #ffffff;
-
-    border: 1px solid #e2e8f0;
-
-    border-radius: 16px;
-
-    padding: 20px;
-
-    min-height: 125px;
-
-    box-shadow:
-        0 4px 14px rgba(15, 23, 42, 0.05);
-
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-.kpi-card:hover {
-    transform: translateY(-2px);
-
-    box-shadow:
-        0 8px 22px rgba(15, 23, 42, 0.08);
-}
-
-.kpi-title {
-    font-size: 12px;
-
-    font-weight: 750;
-
-    color: #64748b;
-
-    text-transform: uppercase;
-
-    letter-spacing: 0.5px;
-}
-
-.kpi-value {
-    font-size: 30px;
-
-    font-weight: 850;
-
-    color: #123b68;
-
-    margin-top: 7px;
-}
-
-.kpi-note {
-    font-size: 11px;
-
-    color: #94a3b8;
-
-    margin-top: 4px;
-}
-
-
-/* =========================================================
-   INFO CARD
-========================================================= */
-
-.info-card {
-    background: #ffffff;
-
-    border: 1px solid #e2e8f0;
-
-    border-radius: 15px;
-
-    padding: 20px;
-
-    box-shadow:
-        0 4px 14px rgba(15, 23, 42, 0.04);
-
-    margin-bottom: 15px;
-}
-
-
-/* =========================================================
-   EVIDENCE CARD
-========================================================= */
-
-.evidence-card {
-    background: #ffffff;
-
-    border: 1px solid #e2e8f0;
-
-    border-radius: 15px;
-
-    padding: 18px;
-
-    margin-bottom: 12px;
-
-    box-shadow:
-        0 3px 12px rgba(15, 23, 42, 0.04);
-}
-
-.evidence-title {
-    font-weight: 750;
-
-    color: #123b68;
-
-    font-size: 14px;
-}
-
-.evidence-text {
-    color: #64748b;
-
-    font-size: 13px;
-
-    margin-top: 5px;
-}
-
-
-/* =========================================================
-   FOOTER
-========================================================= */
-
-.footer {
-    text-align: center;
-
-    margin-top: 40px;
-
-    padding: 25px;
-
-    color: #64748b;
-
-    font-size: 12px;
-
-    border-top: 1px solid #e2e8f0;
-}
-
-
-/* =========================================================
-   METRIC
-========================================================= */
-
-div[data-testid="stMetric"] {
-    background: white;
-
-    padding: 15px;
-
-    border-radius: 12px;
-
-    border: 1px solid #e5e7eb;
-}
-
-
-/* =========================================================
-   DATAFRAME
-========================================================= */
-
-div[data-testid="stDataFrame"] {
-    border-radius: 12px;
-}
-
-
-/* =========================================================
-   RESPONSIVE
-========================================================= */
-
-@media (max-width: 768px) {
-
-    .dashboard-header {
-        flex-direction: column;
-
-        align-items: flex-start;
-
-        padding: 20px;
+st.markdown(
+    """
+    <style>
+
+    .stApp {
+        background-color: #f5f7fb;
     }
 
-    .dashboard-title {
-        font-size: 23px;
+    .block-container {
+        padding-top: 1.5rem;
+        padding-bottom: 3rem;
+        max-width: 1500px;
+    }
+
+    /* HEADER */
+
+    .dashboard-header {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+
+        background: linear-gradient(
+            135deg,
+            #ffffff,
+            #f2f8ff
+        );
+
+        border: 1px solid #dce6f1;
+        border-radius: 18px;
+
+        padding: 25px 30px;
+
+        margin-bottom: 25px;
+
+        box-shadow:
+            0 5px 18px rgba(0,0,0,0.05);
     }
 
     .logo-box {
-        width: 70px;
-        height: 70px;
+        width: 90px;
+        height: 90px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        flex-shrink: 0;
     }
 
     .logo-box img {
-        max-width: 70px;
-        max-height: 70px;
+        max-width: 90px;
+        max-height: 90px;
+        object-fit: contain;
     }
 
-}
+    .dashboard-title {
+        font-size: 30px;
+        font-weight: 800;
+        color: #123b68;
+        line-height: 1.25;
+    }
 
-</style>
-""")
+    .dashboard-subtitle {
+        font-size: 14px;
+        color: #64748b;
+        margin-top: 8px;
+    }
+
+
+    /* SECTION */
+
+    .section-title {
+        font-size: 21px;
+        font-weight: 800;
+        color: #172033;
+
+        margin-top: 25px;
+        margin-bottom: 15px;
+    }
+
+
+    /* KPI */
+
+    .kpi-card {
+        background: white;
+
+        border: 1px solid #e2e8f0;
+
+        border-radius: 16px;
+
+        padding: 20px;
+
+        min-height: 125px;
+
+        box-shadow:
+            0 4px 14px rgba(15,23,42,0.05);
+    }
+
+    .kpi-title {
+        font-size: 12px;
+        font-weight: 700;
+
+        color: #64748b;
+
+        text-transform: uppercase;
+
+        letter-spacing: 0.5px;
+    }
+
+    .kpi-value {
+        font-size: 30px;
+        font-weight: 850;
+
+        color: #123b68;
+
+        margin-top: 7px;
+    }
+
+    .kpi-note {
+        font-size: 11px;
+        color: #94a3b8;
+
+        margin-top: 5px;
+    }
+
+
+    /* INFO */
+
+    .info-card {
+        background: white;
+
+        border: 1px solid #e2e8f0;
+
+        border-radius: 15px;
+
+        padding: 20px;
+
+        margin-bottom: 15px;
+    }
+
+
+    /* FOOTER */
+
+    .footer {
+        text-align: center;
+
+        margin-top: 40px;
+
+        padding: 25px;
+
+        color: #64748b;
+
+        font-size: 12px;
+
+        border-top: 1px solid #e2e8f0;
+    }
+
+
+    @media (max-width: 768px) {
+
+        .dashboard-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .dashboard-title {
+            font-size: 23px;
+        }
+
+    }
+
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 
 # ============================================================
-# 5. FUNGSI LOGO
+# LOGO
 # ============================================================
 
-def image_to_base64(path):
+def get_logo():
 
-    if not os.path.exists(path):
+    if not os.path.exists(LOGO_FILE):
         return None
 
     try:
 
-        with open(path, "rb") as file:
+        with open(LOGO_FILE, "rb") as f:
 
-            encoded = base64.b64encode(
-                file.read()
-            ).decode("utf-8")
-
-        return encoded
+            return base64.b64encode(
+                f.read()
+            ).decode()
 
     except Exception:
 
         return None
 
 
-logo_base64 = image_to_base64(LOGO_FILE)
+logo = get_logo()
 
 
 # ============================================================
-# 6. HEADER
+# HEADER
 # ============================================================
 
-if logo_base64:
+if logo:
 
-    st.html(f"""
-    <div class="dashboard-header">
+    st.markdown(
+        f"""
+        <div class="dashboard-header">
 
-        <div class="logo-box">
+            <div class="logo-box">
 
-            <img
-                src="data:image/png;base64,{logo_base64}"
-                alt="Logo Bisnis Digital FEB UNM"
-            >
-
-        </div>
-
-        <div class="header-text">
-
-            <div class="dashboard-title">
-
-                Dashboard Kinerja Dosen
-                <br>
-
-                Bisnis Digital FEB UNM
+                <img
+                    src="data:image/png;base64,{logo}"
+                    alt="Logo Bisnis Digital FEB UNM"
+                >
 
             </div>
 
-            <div class="dashboard-subtitle">
+            <div>
 
-                Evidence-Based Performance Dashboard
-                &nbsp; | &nbsp;
-                Pendidikan · Penelitian · PkM · Penunjang
+                <div class="dashboard-title">
+
+                    Dashboard Kinerja Dosen
+                    <br>
+                    Bisnis Digital FEB UNM
+
+                </div>
+
+                <div class="dashboard-subtitle">
+
+                    Evidence-Based Performance Dashboard
+                    &nbsp; | &nbsp;
+                    Pendidikan · Penelitian · PkM · Penunjang
+
+                </div>
 
             </div>
 
         </div>
-
-    </div>
-    """)
+        """,
+        unsafe_allow_html=True
+    )
 
 else:
 
-    st.html("""
-    <div class="dashboard-header">
+    st.markdown(
+        """
+        <div class="dashboard-header">
 
-        <div class="header-text">
+            <div>
 
-            <div class="dashboard-title">
+                <div class="dashboard-title">
 
-                Dashboard Kinerja Dosen
-                <br>
+                    Dashboard Kinerja Dosen
+                    <br>
+                    Bisnis Digital FEB UNM
 
-                Bisnis Digital FEB UNM
+                </div>
 
-            </div>
+                <div class="dashboard-subtitle">
 
-            <div class="dashboard-subtitle">
+                    Evidence-Based Performance Dashboard
 
-                Evidence-Based Performance Dashboard
+                </div>
 
             </div>
 
         </div>
-
-    </div>
-    """)
+        """,
+        unsafe_allow_html=True
+    )
 
     st.warning(
-        "File logobd.png tidak ditemukan. "
-        "Pastikan file berada dalam folder yang sama dengan app.py."
+        "File logobd.png tidak ditemukan."
     )
 
 
 # ============================================================
-# 7. FUNGSI NORMALISASI NAMA KOLOM
-# ============================================================
-
-def normalize_column_name(column):
-
-    column = str(column).strip().lower()
-
-    replacements = {
-
-        " ": "_",
-        "-": "_",
-        "/": "_",
-        ".": "_",
-
-    }
-
-    for old, new in replacements.items():
-
-        column = column.replace(old, new)
-
-    return column
-
-
-# ============================================================
-# 8. LOAD DATA
+# LOAD DATA
 # ============================================================
 
 @st.cache_data
@@ -512,52 +325,34 @@ def load_data():
     if not os.path.exists(EXCEL_FILE):
 
         return None, (
-            f"File Excel tidak ditemukan: "
-            f"{EXCEL_FILE}"
+            "File Excel tidak ditemukan: "
+            + EXCEL_FILE
         )
 
     try:
 
         data = pd.read_excel(
-            EXCEL_FILE
+            EXCEL_FILE,
+            engine="openpyxl"
         )
-
-        original_columns = list(
-            data.columns
-        )
-
-        data.columns = [
-
-            normalize_column_name(c)
-
-            for c in data.columns
-
-        ]
 
         return data, None
 
-    except Exception as error:
+    except Exception as e:
 
-        return None, str(error)
-
-
-df, load_error = load_data()
+        return None, str(e)
 
 
-# ============================================================
-# 9. VALIDASI DATA
-# ============================================================
+df, error = load_data()
 
-if load_error:
+
+if error:
 
     st.error(
-        f"❌ {load_error}"
+        "❌ Gagal membaca dataset"
     )
 
-    st.info(
-        "Pastikan file Excel berada dalam folder "
-        "yang sama dengan app.py."
-    )
+    st.code(error)
 
     st.stop()
 
@@ -565,40 +360,61 @@ if load_error:
 if df is None or df.empty:
 
     st.error(
-        "Dataset kosong atau tidak berhasil dibaca."
+        "Dataset kosong."
     )
 
     st.stop()
 
 
 # ============================================================
-# 10. IDENTIFIKASI KOLOM
+# NORMALIZE COLUMN
 # ============================================================
 
-def find_column(dataframe, candidates):
+def normalize_column(col):
 
-    columns = list(
-        dataframe.columns
-    )
+    col = str(col).strip().lower()
+
+    for old, new in [
+        (" ", "_"),
+        ("-", "_"),
+        ("/", "_"),
+        (".", "_")
+    ]:
+
+        col = col.replace(old, new)
+
+    return col
+
+
+df.columns = [
+    normalize_column(c)
+    for c in df.columns
+]
+
+
+# ============================================================
+# FIND COLUMN
+# ============================================================
+
+def find_column(candidates):
 
     for candidate in candidates:
 
-        candidate = normalize_column_name(
+        candidate = normalize_column(
             candidate
         )
 
-        if candidate in columns:
+        if candidate in df.columns:
 
             return candidate
 
-    # pencarian parsial
     for candidate in candidates:
 
-        candidate = normalize_column_name(
+        candidate = normalize_column(
             candidate
         )
 
-        for col in columns:
+        for col in df.columns:
 
             if candidate in col:
 
@@ -607,372 +423,223 @@ def find_column(dataframe, candidates):
     return None
 
 
-NAME_COL = find_column(
-    df,
-    [
-        "nama",
-        "nama_dosen",
-        "dosen",
-        "nama dosen",
-        "lecturer"
-    ]
-)
+NAME_COL = find_column([
+    "nama",
+    "nama_dosen",
+    "dosen",
+    "nama dosen"
+])
 
 
-TYPE_COL = find_column(
-    df,
-    [
-        "jenis",
-        "kategori",
-        "bidang",
-        "jenis_kegiatan",
-        "jenis kegiatan"
-    ]
-)
+TYPE_COL = find_column([
+    "jenis",
+    "kategori",
+    "bidang",
+    "jenis_kegiatan",
+    "jenis kegiatan"
+])
 
 
-YEAR_COL = find_column(
-    df,
-    [
-        "tahun_akademik",
-        "tahun",
-        "tahun akademik",
-        "academic_year"
-    ]
-)
+YEAR_COL = find_column([
+    "tahun",
+    "tahun_akademik",
+    "tahun akademik"
+])
 
 
-SEMESTER_COL = find_column(
-    df,
-    [
-        "semester",
-        "sem"
-    ]
-)
+SEMESTER_COL = find_column([
+    "semester",
+    "sem"
+])
 
 
-RUBRIC_COL = find_column(
-    df,
-    [
-        "rubrik",
-        "aktivitas",
-        "kegiatan",
-        "jenis_aktivitas",
-        "uraian"
-    ]
-)
+ACTIVITY_COL = find_column([
+    "aktivitas",
+    "kegiatan",
+    "uraian",
+    "jenis_aktivitas"
+])
 
 
-FILE_COL = find_column(
-    df,
-    [
-        "file",
-        "bukti",
-        "dokumen",
-        "link",
-        "url",
-        "evidence"
-    ]
-)
+EVIDENCE_COL = find_column([
+    "bukti",
+    "dokumen",
+    "file",
+    "link",
+    "url",
+    "evidence"
+])
 
 
 # ============================================================
-# 11. INFORMASI KOLOM
+# CATEGORY
 # ============================================================
 
-with st.expander(
-    "🔧 Informasi struktur dataset"
-):
+def classify_activity(value):
 
-    st.write(
-        "Kolom yang terdeteksi:"
-    )
+    if pd.isna(value):
 
-    detected = pd.DataFrame({
+        return "Lainnya"
 
-        "Komponen": [
+    text = str(value).lower()
 
-            "Nama Dosen",
-            "Jenis/Kategori",
-            "Tahun Akademik",
-            "Semester",
-            "Rubrik/Aktivitas",
-            "File/Bukti"
-
-        ],
-
-        "Kolom": [
-
-            NAME_COL,
-            TYPE_COL,
-            YEAR_COL,
-            SEMESTER_COL,
-            RUBRIC_COL,
-            FILE_COL
-
+    if any(
+        x in text
+        for x in [
+            "pendidikan",
+            "pengajaran",
+            "pembelajaran",
+            "kuliah"
         ]
+    ):
 
-    })
+        return "Pendidikan"
 
-    st.dataframe(
-        detected,
-        use_container_width=True,
-        hide_index=True
-    )
+    if any(
+        x in text
+        for x in [
+            "penelitian",
+            "research",
+            "riset"
+        ]
+    ):
 
-    st.write(
-        "Seluruh kolom dataset:"
-    )
+        return "Penelitian"
 
-    st.write(
-        list(df.columns)
-    )
+    if any(
+        x in text
+        for x in [
+            "pkm",
+            "pengabdian",
+            "masyarakat"
+        ]
+    ):
 
+        return "PkM"
 
-# ============================================================
-# 12. NORMALISASI KATEGORI
-# ============================================================
+    if any(
+        x in text
+        for x in [
+            "penunjang",
+            "organisasi",
+            "kepanitiaan",
+            "seminar",
+            "asosiasi"
+        ]
+    ):
+
+        return "Penunjang"
+
+    return str(value).strip()
+
 
 if TYPE_COL:
 
-    def normalize_category(value):
-
-        if pd.isna(value):
-
-            return "Lainnya"
-
-        text = str(value).strip().lower()
-
-        # Pendidikan
-        if any(
-            keyword in text
-            for keyword in [
-                "pendidikan",
-                "pengajaran",
-                "ajar",
-                "kuliah",
-                "pembelajaran"
-            ]
-        ):
-
-            return "Pendidikan"
-
-        # Penelitian
-        if any(
-            keyword in text
-            for keyword in [
-                "penelitian",
-                "research",
-                "riset"
-            ]
-        ):
-
-            return "Penelitian"
-
-        # PkM
-        if any(
-            keyword in text
-            for keyword in [
-                "pkm",
-                "pengabdian",
-                "masyarakat"
-            ]
-        ):
-
-            return "PkM"
-
-        # Penunjang
-        if any(
-            keyword in text
-            for keyword in [
-                "penunjang",
-                "organisasi",
-                "kepanitiaan",
-                "seminar",
-                "asosiasi",
-                "administrasi"
-            ]
-        ):
-
-            return "Penunjang"
-
-        return str(value).strip()
-
-
     df["kategori"] = (
-
         df[TYPE_COL]
-
-        .apply(
-            normalize_category
-        )
-
+        .apply(classify_activity)
     )
 
 else:
 
-    df["kategori"] = "Tidak teridentifikasi"
+    df["kategori"] = "Lainnya"
 
 
 # ============================================================
-# 13. SIDEBAR
+# SIDEBAR
 # ============================================================
 
-st.sidebar.markdown(
-    "# 🎛️ FILTER"
-)
+st.sidebar.title("🎛️ FILTER")
 
-st.sidebar.markdown(
-    "---"
-)
+st.sidebar.markdown("---")
 
 
-# ============================================================
-# YEAR FILTER
-# ============================================================
+# YEAR
 
 if YEAR_COL:
 
-    year_values = (
-
+    years = sorted(
         df[YEAR_COL]
-
         .dropna()
-
         .astype(str)
-
         .unique()
-
         .tolist()
-
     )
 
-    year_values = sorted(
-        year_values
+    selected_years = st.sidebar.multiselect(
+        "📅 Tahun",
+        years,
+        default=years
     )
 
 else:
 
-    year_values = []
+    selected_years = []
 
 
-selected_years = st.sidebar.multiselect(
-
-    "📅 Tahun Akademik",
-
-    options=year_values,
-
-    default=year_values
-
-)
-
-
-# ============================================================
-# SEMESTER FILTER
-# ============================================================
+# SEMESTER
 
 if SEMESTER_COL:
 
-    semester_values = (
-
+    semesters = sorted(
         df[SEMESTER_COL]
-
         .dropna()
-
+        .astype(str)
         .unique()
-
         .tolist()
-
     )
 
-    semester_values = sorted(
-        semester_values,
-        key=lambda x: str(x)
+    selected_semesters = st.sidebar.multiselect(
+        "🎓 Semester",
+        semesters,
+        default=semesters
     )
 
 else:
 
-    semester_values = []
+    selected_semesters = []
 
 
-selected_semesters = st.sidebar.multiselect(
+# CATEGORY
 
-    "🎓 Semester",
-
-    options=semester_values,
-
-    default=semester_values
-
-)
-
-
-# ============================================================
-# CATEGORY FILTER
-# ============================================================
-
-category_values = sorted(
-
+categories = sorted(
     df["kategori"]
-
     .dropna()
-
-    .astype(str)
-
     .unique()
-
     .tolist()
-
 )
 
 
 selected_categories = st.sidebar.multiselect(
-
     "📚 Bidang Kinerja",
-
-    options=category_values,
-
-    default=category_values
-
+    categories,
+    default=categories
 )
 
 
-# ============================================================
-# DOSEN FILTER
-# ============================================================
+# DOSEN
 
 if NAME_COL:
 
-    lecturer_values = sorted(
-
+    lecturers = sorted(
         df[NAME_COL]
-
         .dropna()
-
         .astype(str)
-
         .unique()
-
         .tolist()
+    )
 
+    selected_lecturers = st.sidebar.multiselect(
+        "👤 Dosen",
+        lecturers
     )
 
 else:
 
-    lecturer_values = []
+    selected_lecturers = []
 
 
-selected_lecturers = st.sidebar.multiselect(
-
-    "👤 Dosen",
-
-    options=lecturer_values
-
-)
-
-
-# ============================================================
-# RESET FILTER
-# ============================================================
+# RESET
 
 if st.sidebar.button(
     "🔄 Reset Filter",
@@ -983,7 +650,7 @@ if st.sidebar.button(
 
 
 # ============================================================
-# 14. APPLY FILTER
+# FILTER DATA
 # ============================================================
 
 filtered = df.copy()
@@ -1002,6 +669,7 @@ if SEMESTER_COL and selected_semesters:
 
     filtered = filtered[
         filtered[SEMESTER_COL]
+        .astype(str)
         .isin(selected_semesters)
     ]
 
@@ -1024,32 +692,25 @@ if NAME_COL and selected_lecturers:
 
 
 # ============================================================
-# 15. KPI CALCULATION
+# KPI
 # ============================================================
 
-total_activity = len(
-    filtered
-)
+total_activity = len(filtered)
 
 
 if NAME_COL:
 
-    total_lecturers = (
-
+    total_dosen = (
         filtered[NAME_COL]
-
-        .dropna()
-
         .nunique()
-
     )
 
 else:
 
-    total_lecturers = 0
+    total_dosen = 0
 
 
-education_count = int(
+pendidikan = int(
     (
         filtered["kategori"]
         == "Pendidikan"
@@ -1057,7 +718,7 @@ education_count = int(
 )
 
 
-research_count = int(
+penelitian = int(
     (
         filtered["kategori"]
         == "Penelitian"
@@ -1065,7 +726,7 @@ research_count = int(
 )
 
 
-pkm_count = int(
+pkm = int(
     (
         filtered["kategori"]
         == "PkM"
@@ -1073,7 +734,7 @@ pkm_count = int(
 )
 
 
-support_count = int(
+penunjang = int(
     (
         filtered["kategori"]
         == "Penunjang"
@@ -1082,1155 +743,540 @@ support_count = int(
 
 
 # ============================================================
-# 16. EXECUTIVE SUMMARY
+# EXECUTIVE SUMMARY
 # ============================================================
 
-st.html("""
-<div class="section-title">
-    📊 Executive Performance Summary
-</div>
-""")
+st.markdown(
+    """
+    <div class="section-title">
+        📊 Executive Performance Summary
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 
-kpi_columns = st.columns(6)
+cols = st.columns(6)
 
 
-kpis = [
+kpi_data = [
 
     (
         "TOTAL AKTIVITAS",
         total_activity,
-        "seluruh rekam kinerja"
+        "rekam kinerja"
     ),
 
     (
         "DOSEN",
-        total_lecturers,
-        "dosen teridentifikasi"
+        total_dosen,
+        "dosen"
     ),
 
     (
         "PENDIDIKAN",
-        education_count,
-        "aktivitas pendidikan"
+        pendidikan,
+        "aktivitas"
     ),
 
     (
         "PENELITIAN",
-        research_count,
-        "aktivitas penelitian"
+        penelitian,
+        "aktivitas"
     ),
 
     (
         "PkM",
-        pkm_count,
-        "aktivitas pengabdian"
+        pkm,
+        "aktivitas"
     ),
 
     (
         "PENUNJANG",
-        support_count,
-        "aktivitas penunjang"
+        penunjang,
+        "aktivitas"
     )
 
 ]
 
 
-for col, (
-    title,
-    value,
-    note
-) in zip(
-    kpi_columns,
-    kpis
+for col, item in zip(
+    cols,
+    kpi_data
 ):
+
+    title, value, note = item
 
     with col:
 
-        st.html(f"""
-        <div class="kpi-card">
+        st.markdown(
+            f"""
+            <div class="kpi-card">
 
-            <div class="kpi-title">
-                {title}
+                <div class="kpi-title">
+                    {title}
+                </div>
+
+                <div class="kpi-value">
+                    {value:,}
+                </div>
+
+                <div class="kpi-note">
+                    {note}
+                </div>
+
             </div>
-
-            <div class="kpi-value">
-                {value:,}
-            </div>
-
-            <div class="kpi-note">
-                {note}
-            </div>
-
-        </div>
-        """)
+            """,
+            unsafe_allow_html=True
+        )
 
 
 # ============================================================
-# 17. TREN DAN KOMPOSISI
+# KOMPOSISI KINERJA
 # ============================================================
 
-st.html("""
-<div class="section-title">
-    📈 Ringkasan Kinerja
-</div>
-""")
+st.markdown(
+    """
+    <div class="section-title">
+        📊 Komposisi Kinerja
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 
-col1, col2 = st.columns(2)
+composition = (
+
+    filtered["kategori"]
+    .value_counts()
+    .rename("Jumlah")
+    .to_frame()
+)
+
+
+st.bar_chart(
+    composition,
+    use_container_width=True
+)
 
 
 # ============================================================
 # TREND
 # ============================================================
 
-with col1:
-
-    if YEAR_COL and not filtered.empty:
-
-        trend = (
-
-            filtered
-
-            .assign(
-                tahun_plot=
-                filtered[YEAR_COL]
-                .astype(str)
-            )
-
-            .groupby(
-                [
-                    "tahun_plot",
-                    "kategori"
-                ]
-            )
-
-            .size()
-
-            .reset_index(
-                name="jumlah"
-            )
-
-        )
+st.markdown(
+    """
+    <div class="section-title">
+        📈 Tren Kinerja
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 
-        if not trend.empty:
+if YEAR_COL:
 
-            fig = px.line(
+    trend = filtered.copy()
 
-                trend,
-
-                x="tahun_plot",
-
-                y="jumlah",
-
-                color="kategori",
-
-                markers=True,
-
-                title="Tren Kinerja Dosen"
-
-            )
-
-            fig.update_layout(
-
-                height=420,
-
-                xaxis_title="Tahun Akademik",
-
-                yaxis_title="Jumlah Aktivitas",
-
-                legend_title="Bidang",
-
-                hovermode="x unified"
-
-            )
-
-            st.plotly_chart(
-
-                fig,
-
-                use_container_width=True
-
-            )
-
-    else:
-
-        st.info(
-            "Kolom tahun tidak tersedia."
-        )
-
-
-# ============================================================
-# COMPOSITION
-# ============================================================
-
-with col2:
-
-    composition = (
-
-        filtered["kategori"]
-
-        .value_counts()
-
-        .reset_index()
-
+    trend["tahun_display"] = (
+        trend[YEAR_COL]
+        .astype(str)
     )
 
-
-    composition.columns = [
-
-        "kategori",
-        "jumlah"
-
-    ]
-
-
-    if not composition.empty:
-
-        fig = px.pie(
-
-            composition,
-
-            names="kategori",
-
-            values="jumlah",
-
-            hole=0.55,
-
-            title="Komposisi Kinerja"
-
-        )
-
-        fig.update_layout(
-
-            height=420,
-
-            legend_title="Bidang"
-
-        )
-
-        st.plotly_chart(
-
-            fig,
-
-            use_container_width=True
-
-        )
-
-    else:
-
-        st.info(
-            "Tidak ada data."
-        )
-
-
-# ============================================================
-# 18. DISTRIBUSI DOSEN
-# ============================================================
-
-st.html("""
-<div class="section-title">
-    👥 Kinerja per Dosen
-</div>
-""")
-
-
-if NAME_COL and not filtered.empty:
-
-    lecturer_perf = (
-
-        filtered
-
-        .groupby(
-            [
-                NAME_COL,
-                "kategori"
-            ]
-        )
-
-        .size()
-
-        .reset_index(
-            name="jumlah"
-        )
-
+    trend_table = pd.crosstab(
+        trend["tahun_display"],
+        trend["kategori"]
     )
 
+    trend_table = trend_table.sort_index()
 
-    pivot_lecturer = (
-
-        lecturer_perf
-
-        .pivot(
-
-            index=NAME_COL,
-
-            columns="kategori",
-
-            values="jumlah"
-
-        )
-
-        .fillna(0)
-
-    )
-
-
-    pivot_lecturer["TOTAL"] = (
-
-        pivot_lecturer
-
-        .sum(axis=1)
-
-    )
-
-
-    pivot_lecturer = (
-
-        pivot_lecturer
-
-        .sort_values(
-            "TOTAL",
-            ascending=False
-        )
-
-    )
-
-
-    st.dataframe(
-
-        pivot_lecturer,
-
-        use_container_width=True,
-
-        height=400
-
+    st.line_chart(
+        trend_table,
+        use_container_width=True
     )
 
 else:
 
     st.info(
-        "Data dosen tidak tersedia."
+        "Kolom tahun tidak ditemukan."
     )
 
 
 # ============================================================
-# 19. TOP DOSEN & PERBANDINGAN BIDANG
+# KINERJA PER DOSEN
 # ============================================================
 
-col1, col2 = st.columns(2)
+st.markdown(
+    """
+    <div class="section-title">
+        👥 Kinerja Dosen
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+
+if NAME_COL:
+
+    lecturer_table = pd.crosstab(
+        filtered[NAME_COL],
+        filtered["kategori"]
+    )
+
+    lecturer_table["TOTAL"] = (
+        lecturer_table.sum(axis=1)
+    )
+
+    lecturer_table = (
+        lecturer_table
+        .sort_values(
+            "TOTAL",
+            ascending=False
+        )
+    )
+
+    st.dataframe(
+        lecturer_table,
+        use_container_width=True,
+        height=450
+    )
+
+else:
+
+    st.warning(
+        "Kolom nama dosen tidak ditemukan."
+    )
 
 
 # ============================================================
 # TOP DOSEN
 # ============================================================
 
-with col1:
-
-    if NAME_COL and not filtered.empty:
-
-        top_dosen = (
-
-            filtered
-
-            .groupby(NAME_COL)
-
-            .size()
-
-            .reset_index(
-                name="jumlah"
-            )
-
-            .sort_values(
-                "jumlah",
-                ascending=True
-            )
-
-            .tail(10)
-
-        )
-
-
-        if not top_dosen.empty:
-
-            fig = px.bar(
-
-                top_dosen,
-
-                x="jumlah",
-
-                y=NAME_COL,
-
-                orientation="h",
-
-                title=
-                "10 Dosen dengan Aktivitas Terbanyak"
-
-            )
-
-            fig.update_layout(
-
-                height=450,
-
-                xaxis_title="Jumlah Aktivitas",
-
-                yaxis_title=""
-
-            )
-
-            st.plotly_chart(
-
-                fig,
-
-                use_container_width=True
-
-            )
-
-
-# ============================================================
-# PERBANDINGAN TAHUN
-# ============================================================
-
-with col2:
-
-    if YEAR_COL and not filtered.empty:
-
-        category_by_year = (
-
-            filtered
-
-            .assign(
-                tahun_plot=
-                filtered[YEAR_COL]
-                .astype(str)
-            )
-
-            .groupby(
-                [
-                    "tahun_plot",
-                    "kategori"
-                ]
-            )
-
-            .size()
-
-            .reset_index(
-                name="jumlah"
-            )
-
-        )
-
-
-        if not category_by_year.empty:
-
-            fig = px.bar(
-
-                category_by_year,
-
-                x="tahun_plot",
-
-                y="jumlah",
-
-                color="kategori",
-
-                barmode="group",
-
-                title=
-                "Perbandingan Bidang Kinerja per Tahun"
-
-            )
-
-            fig.update_layout(
-
-                height=450,
-
-                xaxis_title="Tahun Akademik",
-
-                yaxis_title="Jumlah Aktivitas",
-
-                legend_title="Bidang"
-
-            )
-
-            st.plotly_chart(
-
-                fig,
-
-                use_container_width=True
-
-            )
-
-
-# ============================================================
-# 20. ANALISIS SEMESTER
-# ============================================================
-
-st.html("""
-<div class="section-title">
-    🎓 Analisis Semester
-</div>
-""")
-
-
-if SEMESTER_COL and not filtered.empty:
-
-    semester_analysis = (
-
-        filtered
-
-        .groupby(
-            [
-                SEMESTER_COL,
-                "kategori"
-            ]
-        )
-
-        .size()
-
-        .reset_index(
-            name="jumlah"
-        )
+st.markdown(
+    """
+    <div class="section-title">
+        🏆 Aktivitas Dosen
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+
+if NAME_COL:
+
+    top_dosen = (
+
+        filtered[NAME_COL]
+        .value_counts()
+        .head(10)
+        .sort_values()
 
     )
 
-
-    if not semester_analysis.empty:
-
-        semester_analysis[
-            SEMESTER_COL
-        ] = semester_analysis[
-            SEMESTER_COL
-        ].astype(str)
-
-
-        fig = px.bar(
-
-            semester_analysis,
-
-            x=SEMESTER_COL,
-
-            y="jumlah",
-
-            color="kategori",
-
-            barmode="group",
-
-            title=
-            "Distribusi Aktivitas berdasarkan Semester"
-
-        )
-
-        fig.update_layout(
-
-            height=430,
-
-            xaxis_title="Semester",
-
-            yaxis_title="Jumlah Aktivitas",
-
-            legend_title="Bidang"
-
-        )
-
-        st.plotly_chart(
-
-            fig,
-
-            use_container_width=True
-
-        )
-
-else:
-
-    st.info(
-        "Kolom semester tidak tersedia."
+    st.bar_chart(
+        top_dosen,
+        horizontal=True,
+        use_container_width=True
     )
 
 
 # ============================================================
-# 21. PROFIL TRIDHARMA
+# PROFIL TRIDHARMA
 # ============================================================
 
-st.html("""
-<div class="section-title">
-    ⚖️ Profil Kinerja Tridharma
-</div>
-""")
+st.markdown(
+    """
+    <div class="section-title">
+        ⚖️ Profil Tridharma dan Penunjang
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 
-profile = (
+profil = (
 
     filtered["kategori"]
-
     .value_counts()
-
     .reindex(
-
         [
             "Pendidikan",
             "Penelitian",
             "PkM",
             "Penunjang"
         ],
-
         fill_value=0
-
     )
-
 )
 
 
-profile_total = profile.sum()
+profil_total = profil.sum()
 
 
-if profile_total > 0:
+if profil_total > 0:
 
-    profile_percentage = (
-
-        profile /
-
-        profile_total *
-
+    profil_persen = (
+        profil /
+        profil_total *
         100
-
     )
 
 else:
 
-    profile_percentage = profile.copy()
+    profil_persen = profil * 0
 
 
-profile_df = pd.DataFrame({
+profil_df = pd.DataFrame({
 
-    "Bidang Kinerja":
-        profile.index,
+    "Bidang": profil.index,
 
-    "Jumlah Aktivitas":
-        profile.values,
+    "Jumlah": profil.values,
 
-    "Persentase":
-        profile_percentage
-        .round(2)
-        .values
+    "Persentase (%)":
+        profil_persen.round(2).values
 
 })
 
 
 st.dataframe(
-
-    profile_df,
-
+    profil_df,
     use_container_width=True,
-
     hide_index=True
-
 )
 
 
 # ============================================================
-# 22. INDIKATOR KINERJA
+# INDIKATOR
 # ============================================================
 
-st.html("""
-<div class="section-title">
-    🎯 Indikator Kinerja
-</div>
-""")
+st.markdown(
+    """
+    <div class="section-title">
+        🎯 Indikator Kinerja
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 
-if total_lecturers > 0:
+if total_dosen > 0:
 
-    average_activity = (
-
+    rata_rata = (
         total_activity /
-
-        total_lecturers
-
+        total_dosen
     )
 
 else:
 
-    average_activity = 0
+    rata_rata = 0
 
 
 if total_activity > 0:
 
-    research_share = (
-
-        research_count /
-
+    proporsi_penelitian = (
+        penelitian /
         total_activity *
-
         100
-
     )
 
-    pkm_share = (
-
-        pkm_count /
-
+    proporsi_pkm = (
+        pkm /
         total_activity *
-
         100
-
     )
 
 else:
 
-    research_share = 0
-
-    pkm_share = 0
-
-
-ind1, ind2, ind3 = st.columns(3)
+    proporsi_penelitian = 0
+    proporsi_pkm = 0
 
 
-with ind1:
+c1, c2, c3 = st.columns(3)
+
+
+with c1:
 
     st.metric(
-
         "Rata-rata Aktivitas / Dosen",
-
-        f"{average_activity:.1f}"
-
+        f"{rata_rata:.1f}"
     )
 
 
-with ind2:
+with c2:
 
     st.metric(
-
         "Proporsi Penelitian",
-
-        f"{research_share:.1f}%"
-
+        f"{proporsi_penelitian:.1f}%"
     )
 
 
-with ind3:
+with c3:
 
     st.metric(
-
         "Proporsi PkM",
-
-        f"{pkm_share:.1f}%"
-
+        f"{proporsi_pkm:.1f}%"
     )
 
 
 # ============================================================
-# 23. RUBRIK / JENIS AKTIVITAS
+# DATA EVIDENCE
 # ============================================================
 
-st.html("""
-<div class="section-title">
-    📚 Analisis Jenis Aktivitas
-</div>
-""")
-
-
-if RUBRIC_COL and not filtered.empty:
-
-    rubric_summary = (
-
-        filtered
-
-        .groupby(
-            [
-                "kategori",
-                RUBRIC_COL
-            ]
-        )
-
-        .size()
-
-        .reset_index(
-            name="jumlah"
-        )
-
-        .sort_values(
-            "jumlah",
-            ascending=False
-        )
-
-    )
-
-
-    st.dataframe(
-
-        rubric_summary,
-
-        use_container_width=True,
-
-        height=450,
-
-        hide_index=True
-
-    )
-
-else:
-
-    st.info(
-        "Kolom rubrik/aktivitas tidak ditemukan."
-    )
-
-
-# ============================================================
-# 24. MATRIX DOSEN × BIDANG
-# ============================================================
-
-st.html("""
-<div class="section-title">
-    🧩 Matriks Kinerja Dosen × Bidang
-</div>
-""")
-
-
-if NAME_COL and not filtered.empty:
-
-    matrix = pd.crosstab(
-
-        filtered[NAME_COL],
-
-        filtered["kategori"]
-
-    )
-
-
-    matrix["TOTAL"] = (
-
-        matrix.sum(axis=1)
-
-    )
-
-
-    matrix = (
-
-        matrix
-
-        .sort_values(
-            "TOTAL",
-            ascending=False
-        )
-
-    )
-
-
-    st.dataframe(
-
-        matrix,
-
-        use_container_width=True,
-
-        height=450
-
-    )
-
-else:
-
-    st.info(
-        "Data dosen tidak tersedia."
-    )
-
-
-# ============================================================
-# 25. EVIDENCE EXPLORER
-# ============================================================
-
-st.html("""
-<div class="section-title">
-    🔎 Evidence Explorer
-</div>
-""")
-
-
-st.html("""
-<div class="info-card">
-
-    <b>Evidence-Based Performance</b>
-
-    <br><br>
-
-    Dashboard ini menghubungkan rekam kinerja
-    dosen dengan data aktivitas yang tersedia
-    dalam dataset.
-
-    <br><br>
-
-    Data dapat digunakan untuk menelusuri
-    Pendidikan, Penelitian, PkM, dan Penunjang.
-
-</div>
-""")
-
-
-# ============================================================
-# EVIDENCE TABLE
-# ============================================================
-
-evidence_columns = []
-
-
-if NAME_COL:
-
-    evidence_columns.append(
-        NAME_COL
-    )
-
-
-if YEAR_COL:
-
-    evidence_columns.append(
-        YEAR_COL
-    )
-
-
-if SEMESTER_COL:
-
-    evidence_columns.append(
-        SEMESTER_COL
-    )
-
-
-evidence_columns.append(
-    "kategori"
+st.markdown(
+    """
+    <div class="section-title">
+        🔎 Evidence Explorer
+    </div>
+    """,
+    unsafe_allow_html=True
 )
 
 
-if RUBRIC_COL:
-
-    evidence_columns.append(
-        RUBRIC_COL
-    )
+evidence_cols = []
 
 
-if FILE_COL:
+if NAME_COL:
+    evidence_cols.append(NAME_COL)
 
-    evidence_columns.append(
-        FILE_COL
-    )
+if YEAR_COL:
+    evidence_cols.append(YEAR_COL)
+
+if SEMESTER_COL:
+    evidence_cols.append(SEMESTER_COL)
+
+evidence_cols.append("kategori")
 
 
-evidence_df = filtered[
-    evidence_columns
+if ACTIVITY_COL:
+    evidence_cols.append(ACTIVITY_COL)
+
+if EVIDENCE_COL:
+    evidence_cols.append(EVIDENCE_COL)
+
+
+evidence = filtered[
+    evidence_cols
 ].copy()
 
 
-# Rename untuk tampilan
+# Rename
 
-rename_map = {}
+rename = {}
 
 
 if NAME_COL:
-
-    rename_map[NAME_COL] = "Dosen"
-
+    rename[NAME_COL] = "Dosen"
 
 if YEAR_COL:
-
-    rename_map[YEAR_COL] = "Tahun Akademik"
-
+    rename[YEAR_COL] = "Tahun"
 
 if SEMESTER_COL:
+    rename[SEMESTER_COL] = "Semester"
 
-    rename_map[SEMESTER_COL] = "Semester"
-
-
-rename_map["kategori"] = "Bidang"
+rename["kategori"] = "Bidang"
 
 
-if RUBRIC_COL:
+if ACTIVITY_COL:
+    rename[ACTIVITY_COL] = "Aktivitas"
 
-    rename_map[RUBRIC_COL] = "Aktivitas"
-
-
-if FILE_COL:
-
-    rename_map[FILE_COL] = "Bukti"
+if EVIDENCE_COL:
+    rename[EVIDENCE_COL] = "Bukti"
 
 
-evidence_df = evidence_df.rename(
-    columns=rename_map
+evidence = evidence.rename(
+    columns=rename
 )
 
 
 # ============================================================
-# EVIDENCE LINK
+# DISPLAY EVIDENCE
 # ============================================================
 
-if "Bukti" in evidence_df.columns:
-
-    def format_evidence(value):
-
-        if pd.isna(value):
-
-            return ""
-
-        value = str(value).strip()
-
-        if (
-
-            value.startswith(
-                "http://"
-            )
-
-            or
-
-            value.startswith(
-                "https://"
-            )
-
-        ):
-
-            return (
-                f'<a href="{value}" '
-                f'target="_blank">'
-                f'📄 Lihat Bukti'
-                f'</a>'
-            )
-
-        return value
-
-
-    evidence_html = (
-
-        evidence_df
-
-        .copy()
-
-    )
-
-
-    evidence_html["Bukti"] = (
-
-        evidence_html["Bukti"]
-
-        .apply(
-            format_evidence
-        )
-
-    )
-
-
-    st.write(
-
-        evidence_html.to_html(
-
-            escape=False,
-
-            index=False
-
-        ),
-
-        unsafe_allow_html=True
-
-    )
-
-else:
-
-    st.dataframe(
-
-        evidence_df,
-
-        use_container_width=True,
-
-        hide_index=True
-
-    )
-
-
-# ============================================================
-# 26. DATA DETAIL
-# ============================================================
-
-st.html("""
-<div class="section-title">
-    🗂️ Data Detail
-</div>
-""")
-
-
-with st.expander(
-    "Tampilkan seluruh data hasil filter"
-):
-
-    st.dataframe(
-
-        filtered,
-
-        use_container_width=True,
-
-        height=500
-
-    )
-
-
-# ============================================================
-# 27. DOWNLOAD CSV
-# ============================================================
-
-st.html("""
-<div class="section-title">
-    ⬇️ Export Data
-</div>
-""")
-
-
-csv_data = (
-
-    filtered
-
-    .to_csv(
-        index=False
-    )
-
-    .encode("utf-8")
-
+st.dataframe(
+    evidence,
+    use_container_width=True,
+    height=450,
+    hide_index=True
 )
+
+
+# ============================================================
+# DOWNLOAD
+# ============================================================
+
+st.markdown(
+    """
+    <div class="section-title">
+        ⬇️ Export Data
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+
+csv = filtered.to_csv(
+    index=False
+).encode("utf-8")
 
 
 st.download_button(
-
     label="⬇️ Download Data CSV",
-
-    data=csv_data,
-
-    file_name=(
-        "kinerja_dosen_bisnis_digital_filtered.csv"
-    ),
-
+    data=csv,
+    file_name="kinerja_dosen_bisnis_digital.csv",
     mime="text/csv",
-
     use_container_width=True
-
 )
 
 
 # ============================================================
-# 28. FOOTER
+# DATASET INFO
 # ============================================================
 
-st.html("""
-<div class="footer">
+with st.expander(
+    "🔧 Informasi Dataset"
+):
 
-    <b>
-        Dashboard Kinerja Dosen
-        Bisnis Digital FEB UNM
-    </b>
+    st.write(
+        f"Jumlah baris: **{len(df):,}**"
+    )
 
-    <br><br>
+    st.write(
+        f"Jumlah kolom: **{len(df.columns):,}**"
+    )
 
-    Evidence-Based Performance Dashboard
+    st.write(
+        "Kolom dataset:"
+    )
 
-    <br>
-
-    Pendidikan · Penelitian · PkM · Penunjang
-
-</div>
-""")
+    st.code(
+        "\n".join(
+            df.columns.tolist()
+        )
+    )
 
 
 # ============================================================
-# END
+# FOOTER
 # ============================================================
+
+st.markdown(
+    """
+    <div class="footer">
+
+        <b>
+            Dashboard Kinerja Dosen
+            Bisnis Digital FEB UNM
+        </b>
+
+        <br><br>
+
+        Evidence-Based Performance Dashboard
+
+        <br>
+
+        Pendidikan · Penelitian · PkM · Penunjang
+
+    </div>
+    """,
+    unsafe_allow_html=True
+)
