@@ -5,15 +5,12 @@
 # ============================================================
 
 import os
-
 import pandas as pd
 import streamlit as st
-
 
 # ============================================================
 # OPTIONAL PLOTLY
 # ============================================================
-
 try:
     import plotly.express as px
 
@@ -30,20 +27,16 @@ except Exception:
 
 st.set_page_config(
     page_title="Dashboard Kinerja Dosen | Bisnis Digital FEB UNM",
-    page_icon="📊",
+    page_icon="❇️",
     layout="wide",
-    initial_sidebar_state="expanded"
-)
-
+    initial_sidebar_state="expanded")
 
 # ============================================================
 # FILE CONFIGURATION
 # ============================================================
 
 EXCEL_FILE = "DATA KINERJA DOSEN BISDIG 2022-2025_OK.xlsx"
-
 LOGO_FILE = "logobd.png"
-
 
 # ============================================================
 # SIMPLE CSS
@@ -171,24 +164,15 @@ def normalize_column(column):
     text = text.replace(".", "_")
 
     return text
-
-
 df.columns = [
     normalize_column(column)
-    for column in df.columns
-]
-
-
+    for column in df.columns]
 # ============================================================
 # FIND COLUMN
 # ============================================================
-
 def find_column(candidates):
-
     # Exact matching
-
     for candidate in candidates:
-
         candidate = normalize_column(
             candidate
         )
